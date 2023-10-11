@@ -4,10 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.UUID;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.Uuid;
 
 public class CreateUserService {
 	
@@ -50,7 +49,7 @@ public class CreateUserService {
 
 	private void insertNewUser(String email) throws SQLException {
 		var insert = connection.prepareStatement("INSERT INTO users (uuid, email) VALUES (?,?)");
-		var uuid = Uuid.randomUuid().toString();
+		var uuid = UUID.randomUUID().toString();
 		
 		insert.setString(1, uuid);
 		insert.setString(2, email);
