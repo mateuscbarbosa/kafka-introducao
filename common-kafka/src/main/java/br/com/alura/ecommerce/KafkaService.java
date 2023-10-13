@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -15,20 +14,21 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 public class KafkaService<T> implements Closeable{
 
-	private final KafkaConsumer<String, T> consumer;
-	private final ConsumerFunction parse;
+	//private final KafkaConsumer<String, T> consumer;
+	private final KafkaConsumer<String, Message<T>> consumer;
+	private final ConsumerFunction<T> parse;
 
-	public KafkaService(String groupId, String topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+	public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
 		this(parse,groupId, type, properties);
 		consumer.subscribe(Collections.singletonList(topic));
 	}
 	
-	public KafkaService(String groupId, Pattern topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+	public KafkaService(String groupId, Pattern topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
 		this(parse,groupId, type, properties);
 		consumer.subscribe(topic);
 	}
 	
-	private KafkaService(ConsumerFunction parse, String groupId, Class<T> type, Map<String, String> properties) {
+	private KafkaService(ConsumerFunction<T> parse, String groupId, Class<T> type, Map<String, String> properties) {
 		this.parse = parse;
 		this.consumer = new KafkaConsumer<>(getProperties(type, groupId, properties));
 	}
@@ -60,7 +60,7 @@ public class KafkaService<T> implements Closeable{
 		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 		properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
 		properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
-		properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
+		//properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
 		properties.putAll(overrideProperties);
 		
 		return properties;
