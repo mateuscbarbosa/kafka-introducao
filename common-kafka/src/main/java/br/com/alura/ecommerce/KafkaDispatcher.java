@@ -3,11 +3,13 @@ package br.com.alura.ecommerce;
 import java.io.Closeable;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 public class KafkaDispatcher<T> implements Closeable{
@@ -29,6 +31,11 @@ public class KafkaDispatcher<T> implements Closeable{
 	}
 
 	public void send(String topic, String key, CorrelationId correlationId, T payload) throws InterruptedException, ExecutionException {
+		var future = sendAsync(topic, key, correlationId, payload);
+		future.get();
+	}
+
+	public Future<RecordMetadata> sendAsync(String topic, String key, CorrelationId correlationId, T payload) {
 		var value = new Message<>(correlationId, payload);
 		var record = new ProducerRecord<>(topic, key, value);
 		Callback callback = (data, ex) -> {
@@ -42,7 +49,7 @@ public class KafkaDispatcher<T> implements Closeable{
 					+ data.timestamp());
 			};
  
-		producer.send(record, callback).get();
+		return producer.send(record, callback);
 	}
 
 	@Override
