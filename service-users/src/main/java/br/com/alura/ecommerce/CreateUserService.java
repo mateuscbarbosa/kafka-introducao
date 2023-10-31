@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -23,7 +24,7 @@ public class CreateUserService {
 				+ "email VARCHAR(255))");
 	}
 	
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, InterruptedException, ExecutionException {
 		var createUserService = new CreateUserService();
 		try (var service = new KafkaService(
 				CreateUserService.class.getSimpleName(),

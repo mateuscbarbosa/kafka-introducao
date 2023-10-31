@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -25,7 +26,7 @@ public class BatchSendMessageService {
 				+ "email VARCHAR(255))");
 	}
 	
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, InterruptedException, ExecutionException {
 		var batchService = new BatchSendMessageService();
 		try (var service = new KafkaService(
 				BatchSendMessageService.class.getSimpleName(),
@@ -42,12 +43,16 @@ public class BatchSendMessageService {
 		var message = record.value();
 		System.out.println("Topic: " + message.getPayload());
 		
+		/*if(true)
+			throw new RuntimeException("Erro forçado");*/
+		
 		for(User user: getAllUsers()) {
 			userDispatcher.sendAsync(
 					message.getPayload(),
 					user.getUuid(),
 					message.getId().continueWith(BatchSendMessageService.class.getSimpleName()),
 					user);
+			System.out.println("Acho que enviei para" + user);
 		}
 	}
 
