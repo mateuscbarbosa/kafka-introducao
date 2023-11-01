@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
+
 public class NewOrderMain {
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		try (var orderDispatcher = new KafkaDispatcher<Order>()) {
@@ -15,17 +17,19 @@ public class NewOrderMain {
 					var amount = new BigDecimal(Math.random() * 5000 + 1).setScale(2, RoundingMode.HALF_UP);
 				
 					var order = new Order( orderId, amount, email);
+					
+					var correlationId = new CorrelationId(NewOrderMain.class.getSimpleName());
 					orderDispatcher.send(
 							"ECOMMERCE_NEW_ORDER",
 							email,
-							new CorrelationId(NewOrderMain.class.getSimpleName()),
+							correlationId,
 							order);
 
 					var emailCode = "Thank you for your order. We are processing your order.";
 					emailDispatcher.send(
 							"ECOMMERCE_SEND_EMAIL",
 							email,
-							new CorrelationId(NewOrderMain.class.getSimpleName()),
+							correlationId,
 							emailCode);
 				}
 			}

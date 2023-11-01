@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

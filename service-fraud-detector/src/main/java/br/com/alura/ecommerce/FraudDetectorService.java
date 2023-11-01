@@ -6,6 +6,9 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+import br.com.alura.ecommerce.consumer.KafkaService;
+import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
+
 public class FraudDetectorService {
 
 	private final KafkaDispatcher<Order> orderDispatcher = new KafkaDispatcher<>();

@@ -1,4 +1,4 @@
-package br.com.alura.ecommerce;
+package br.com.alura.ecommerce.consumer;
 
 import java.io.Closeable;
 import java.time.Duration;
@@ -12,6 +12,10 @@ import java.util.regex.Pattern;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+
+import br.com.alura.ecommerce.Message;
+import br.com.alura.ecommerce.dispatcher.GsonSerializer;
+import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
 
 public class KafkaService<T> implements Closeable{
 
