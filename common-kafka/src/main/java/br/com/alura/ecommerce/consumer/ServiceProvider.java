@@ -1,10 +1,8 @@
-package br.com.alura.ecommerce;
+package br.com.alura.ecommerce.consumer;
 
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-
-import br.com.alura.ecommerce.consumer.KafkaService;
 
 public class ServiceProvider<T> implements Callable<Void>{
 

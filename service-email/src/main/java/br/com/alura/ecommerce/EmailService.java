@@ -2,10 +2,13 @@ package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+import br.com.alura.ecommerce.consumer.ConsumerService;
+import br.com.alura.ecommerce.consumer.ServiceRunner;
+
 public class EmailService implements ConsumerService<String>{
 
 	public static void main(String[] args) {
-		new ServiceRunner(EmailService::new).start(5);
+		new ServiceRunner<>(EmailService::new).start(5);
 	}
 	
 	@Override
@@ -19,7 +22,7 @@ public class EmailService implements ConsumerService<String>{
 	}
 	
 	@Override
-	public void parse(ConsumerRecord<String, String> record) {
+	public void parse(ConsumerRecord<String, Message<String>> record) {
 		System.out.println("------------------------------------------");
 		System.out.println("Send email.");
 		System.out.println(record.key());
