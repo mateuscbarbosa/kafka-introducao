@@ -13,7 +13,7 @@ public class ServiceProvider<T> implements Callable<Void>{
 	}
 
 	@Override
-	public Void call() throws InterruptedException, ExecutionException {
+	public Void call() throws Exception {
 		var myService = factory.create();
 		try(var service = new KafkaService(
 				myService.getConsumerGroup(),
