@@ -10,16 +10,14 @@
 	<artifactId>service-users</artifactId>
 
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.6.0</version>
-		</dependency>
-
 		<dependency>
 			<groupId>br.com.alura</groupId>
 			<artifactId>common-kafka</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.alura</groupId>
+			<artifactId>common-database</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

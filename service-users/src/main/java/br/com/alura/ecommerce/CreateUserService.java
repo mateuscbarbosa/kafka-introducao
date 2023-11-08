@@ -1,7 +1,5 @@
 package br.com.alura.ecommerce;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -9,20 +7,17 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import br.com.alura.ecommerce.consumer.ConsumerService;
 import br.com.alura.ecommerce.consumer.ServiceRunner;
+import br.com.alura.ecommerce.database.LocalDatabase;
 
 public class CreateUserService implements ConsumerService<Order>{
 	
-	private final Connection connection;
+	private final LocalDatabase database;
 
-	public CreateUserService() throws SQLException {
-		String url = "jdbc:postgresql://localhost/ecommerce";
-		String user = "postgres";
-		String password = "postgres";
-		
-		connection = DriverManager.getConnection(url, user, password);
-		connection.createStatement().execute("CREATE TABLE IF NOT EXISTS users("
-				+ "uuid VARCHAR(255) PRIMARY KEY,"
-				+ "email VARCHAR(255))");
+	CreateUserService() throws SQLException{
+		this.database = new LocalDatabase("ecommerce");
+		this.database.crateIfNotExists("CREATE TABLE IF NOT EXISTS users("
+			+ "uuid VARCHAR(255) PRIMARY KEY,"
+			+ "email VARCHAR(255))");
 	}
 	
 	public static void main(String[] args) {
@@ -53,21 +48,16 @@ public class CreateUserService implements ConsumerService<Order>{
 	}
 
 	private void insertNewUser(String email) throws SQLException {
-		var insert = connection.prepareStatement("INSERT INTO users (uuid, email) VALUES (?,?)");
 		var uuid = UUID.randomUUID().toString();
+		database.update("INSERT INTO users (uuid, email) VALUES (?,?)", uuid, email);
 		
-		insert.setString(1, uuid);
-		insert.setString(2, email);
-		insert.execute();
 		System.out.println("Usuário " + uuid + " e " + email + " adicionado.");
 	}
 
 	private boolean isNewUser(String email) throws SQLException {
-		var exists = connection.prepareStatement("SELECT uuid FROM users "
-				+ "WHERE email = ?");
-		exists.setString(1, email);
-		var results = exists.executeQuery();
-		
+		var results = database.query("SELECT uuid FROM users "
+				+ "WHERE email = ?", email);
+				
 		return !results.next();
 	}
 
